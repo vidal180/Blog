@@ -9,7 +9,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class UserType extends AbstractType
 {
@@ -49,23 +48,4 @@ class UserType extends AbstractType
     }
 
 
-    /**
-     * Sets the default options for this type.
-     *
-     * @param OptionsResolverInterface $resolver The resolver for the options.
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        // TODO: Implement setDefaultOptions() method.
-    }
-
-    /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
-     */
-    public function getName()
-    {
-        // TODO: Implement getName() method.
-    }
 }

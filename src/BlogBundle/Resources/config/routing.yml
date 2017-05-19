@@ -1,7 +1,3 @@
-blog_add_tag:
-    path:    /tags/add
-    defaults: { _controller: BlogBundle:Tag:add }
-
 login:
     path: /login
     defaults: { _controller: BlogBundle:User:login }
