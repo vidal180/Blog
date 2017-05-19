@@ -1,0 +1,83 @@
+<?php
+
+namespace BlogBundle\Entity;
+
+/**
+ * Category
+ */
+class Category
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $dscription;
+
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Category
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set dscription
+     *
+     * @param string $dscription
+     *
+     * @return Category
+     */
+    public function setDscription($dscription)
+    {
+        $this->dscription = $dscription;
+
+        return $this;
+    }
+
+    /**
+     * Get dscription
+     *
+     * @return string
+     */
+    public function getDscription()
+    {
+        return $this->dscription;
+    }
+}
