@@ -25,21 +25,38 @@ class EntryController extends Controller
 
         if($form->isSubmitted()){
             if($form->isValid()){
-                /*$em = $this->getDoctrine()->getManager();
-                $category = new Category();
-                $category->setName($form->get("name")->getData());
-                $category->setDescription($form->get("description")->getData());
-                $em->persist($category);
+                $em = $this->getDoctrine()->getManager();
+                $category_repo = $em->getRepository("BlogBundle:Category");
+
+                $entry = new Entry();
+                $entry->setTitle($form->get("title")->getData());
+                $entry->setContent($form->get("content")->getData());
+                $entry->setStatus($form->get("status")->getData());
+
+                $file = $form["image"]->getData();
+                $ext = $file->guessExtension();
+                $file_name = time().".".$ext;
+                $file->move("uploads", $file_name);
+
+                $entry->setImage($file_name);
+                $category = $category_repo->find($form->get("category")->getData());
+
+                $entry->setCategory($category);
+                $user = $this->getUser();
+                $entry->setUser($user);
+
+                $em->persist($entry);
                 $flush = $em->flush();
+
                 if($flush == null){
                     $status = true;
                 }else{
                     $status = false;
-                }*/
+                }
             }else{
                 $status = false;
             }
-            //$this->session->getFlashBag()->add("status", $status);
+            $this->session->getFlashBag()->add("status", $status);
             //return $this->redirectToRoute("blog_index_category");
         }
         return $this->render("BlogBundle:Entry:add.html.twig", array(
