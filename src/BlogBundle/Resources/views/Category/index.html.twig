@@ -1,0 +1,42 @@
+{% extends "BlogBundle::layout.html.twig" %}
+
+{% block content %}
+    <div class="col-lg-6">
+        <h2>Todas las categorías</h2>
+        <hr>
+        <a href="{{ path("blog_add_category") }} " class="btn btn-success">Anadir categoría</a>
+        <hr>
+        {% for message in app.session.flashbag().get('status') %}
+            {% if message %}
+                <div class="alert alert-success">La categoría se ha creado correctamente</div>
+            {% else %}
+                <div class="alert alert-danger">La categoría no se ha creado, porque el formulario no es válido</div>
+            {% endif %}
+        {% endfor %}
+        <table class="table table-bordered">
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+            {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }} </td>
+                    <td>{{ category.description }}</td>
+                    <td>
+                        <a href="{{ path('blog_edit_category', {"id":category.id}) }}" class="btn btn-primary">Editar</a>
+                    </td>
+                    <td>
+                        {% if category.entries|length == 0 %}
+                            <a href="{{ path('blog_delete_category', {"id":category.id}) }}" class="btn btn-danger">Eliminar</a>
+                        {% else %}
+                            <div class="alert alert-warning">Categoría en uso</div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="clearfix"></div>
+{% endblock %}
