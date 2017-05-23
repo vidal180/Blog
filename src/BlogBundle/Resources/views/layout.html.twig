@@ -40,8 +40,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     {% if app.user != null %}
-                                        <li><a href="{{ path('blog_add_tag') }}">Anadir etiquetas</a></li>
                                         <li><a href="{{ path('blog_index_tag') }}">Listar etiquetas</a></li>
+                                        <li><a href="{{ path('blog_index_category') }}">Listar categorías</a></li>
                                         <li role="separator" class="divider"></li>
                                         <li><a href="{{ path('logout') }}">Salir</a></li>
                                     {% else %}
