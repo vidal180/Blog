@@ -1,0 +1,30 @@
+{% extends "BlogBundle::layout.html.twig" %}
+
+{% block content %}
+    {% for message in app.session.flashbag().get('status') %}
+        {% if message %}
+            <div class="alert alert-success">La etiqueta se ha creado correctamente</div>
+        {% else %}
+            <div class="alert alert-danger">La etiqueta no se ha creado, porque el formulario no es válido</div>
+        {% endif %}
+    {% endfor %}
+    {% for entry in entries %}
+        <div class="col-lg-11">
+            <p class="pull-left" style="margin-right: 20px">
+                {% if entry.image != null %}
+                    <img width="100px" src="{{ asset('uploads/'~entry.image) }}">
+                {% else %}
+                    <img width="100px" src="{{ asset('uploads/Sin_imagen.png') }}">
+                {% endif %}
+            </p>
+            <p>{{ entry.title }}</p>
+            <p>{{ entry.category.name }}</p>
+            <!--{#{% for et in entry.entryTag %}
+                <p>{{ et.tag.name }}</p>
+            {% endfor %}#}-->
+            <hr>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+    {% endfor %}
+{% endblock %}
