@@ -1,6 +1,7 @@
 BlogBundle\Entity\Entry:
     type: entity
     table: entry
+    repositoryClass: BlogBundle\Repository\EntryRepository
     indexes:
         fk_entry_user:
             columns:

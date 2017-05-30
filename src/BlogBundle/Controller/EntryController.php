@@ -17,6 +17,16 @@ class EntryController extends Controller
         $this->session = new Session();
     }
 
+    public function indexAction(){
+        $em = $this->getDoctrine()->getManager();
+        $entry_repository = $em->getRepository("BlogBundle:Entry");
+
+        $entries = $entry_repository->findAll();
+        return $this->render("BlogBundle:Entry:index.html.twig", array(
+            "entries"=> $entries
+        ));
+    }
+
     public function addAction(Request $request){
         $entry = new Entry();
         $form = $this->createForm(EntryType::class, $entry);
@@ -26,6 +36,7 @@ class EntryController extends Controller
         if($form->isSubmitted()){
             if($form->isValid()){
                 $em = $this->getDoctrine()->getManager();
+                $entry_repo = $em->getRepository("BlogBundle:Entry");
                 $category_repo = $em->getRepository("BlogBundle:Category");
 
                 $entry = new Entry();
@@ -47,6 +58,10 @@ class EntryController extends Controller
 
                 $em->persist($entry);
                 $flush = $em->flush();
+                $entry_repo->saveEntryTags($form->get("tags")->getData(),
+                    $form->get("title")->getData(),
+                    $category,
+                    $user);
 
                 if($flush == null){
                     $status = true;
@@ -57,7 +72,7 @@ class EntryController extends Controller
                 $status = false;
             }
             $this->session->getFlashBag()->add("status", $status);
-            //return $this->redirectToRoute("blog_index_category");
+            return $this->redirectToRoute("blog_homepage");
         }
         return $this->render("BlogBundle:Entry:add.html.twig", array(
             "form" => $form->createView()
@@ -72,7 +87,7 @@ class EntryController extends Controller
             $em->remove($category);
             $em->flush();
         }
-        return $this->redirectToRoute("blog_index_category");
+        return $this->redirectToRoute("blog_homepage");
     }
 
     public function editAction($id, Request $request){
