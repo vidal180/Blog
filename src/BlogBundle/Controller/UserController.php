@@ -56,6 +56,7 @@ class UserController extends Controller
                $status = "El usuario ya existe";
            }
            $this->session->getFlashBag()->add("status", $status);
+           return $this->redirectToRoute("blog_index_tag");
        }
        return $this->render("BlogBundle:User:login.html.twig", array(
            "error" => $error,

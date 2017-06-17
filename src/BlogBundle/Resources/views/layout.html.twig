@@ -42,6 +42,7 @@
                                     {% if app.user != null %}
                                         <li><a href="{{ path('blog_index_tag') }}">Listar etiquetas</a></li>
                                         <li><a href="{{ path('blog_index_category') }}">Listar categorías</a></li>
+                                        <li><a href="{{ path('blog_add_entry') }}">Añadir entradas</a></li>
                                         <li role="separator" class="divider"></li>
                                         <li><a href="{{ path('logout') }}">Salir</a></li>
                                     {% else %}
