@@ -20,15 +20,20 @@ class EntryController extends Controller
     public function indexAction(){
         $em = $this->getDoctrine()->getManager();
         $entry_repository = $em->getRepository("BlogBundle:Entry");
-
+        $category_repo = $em->getRepository("BlogBundle:Category");
         $entries = $entry_repository->findAll();
+        $categories = $category_repo->findAll();
         return $this->render("BlogBundle:Entry:index.html.twig", array(
-            "entries"=> $entries
+            "entries"=> $entries,
+            "categories" => $categories
         ));
     }
 
     public function addAction(Request $request){
         $entry = new Entry();
+        $em = $this->getDoctrine()->getManager();
+        $dpto = $em->getRepository("BlogBundle:Departamentos");
+        $dptos = $dpto->findAll();
         $form = $this->createForm(EntryType::class, $entry);
 
         $form->handleRequest($request);
@@ -81,41 +86,81 @@ class EntryController extends Controller
 
     public function deleteAction($id){
         $em = $this->getDoctrine()->getManager();
-        $category_repository = $em->getRepository("BlogBundle:Category");
-        $category = $category_repository->find($id);
-        if(count($category->getEntries()) == 0){
-            $em->remove($category);
+        $entry_repository = $em->getRepository("BlogBundle:Entry");
+        $entry_tag_repository = $em->getRepository("BlogBundle:EntryTag");
+        $entry = $entry_repository->find($id);
+        $entryTag = $entry_tag_repository->findBy(array("entry" => $entry));
+        foreach ($entryTag as $et){
+            if(is_object($et)){
+                $em->remove($et);
+                $em->flush();
+            }
+        }
+        if(is_object($entry)){
+            $em->remove($entry);
             $em->flush();
         }
         return $this->redirectToRoute("blog_homepage");
     }
-
-    public function editAction($id, Request $request){
-        $em = $this->getDoctrine()->getManager();
-        $category_repository = $em->getRepository("BlogBundle:Category");
-        $category = $category_repository->find($id);
-
-        $form = $this->createForm(CategoryType::class, $category);
+    public function editAction(Request $request, $id){
+        $em = $this->getDoctrine()->getEntityManager();
+        $entry_repo = $em->getRepository("BlogBundle:Entry");
+        $category_repo = $em->getRepository("BlogBundle:Category");
+        $entry = $entry_repo->find($id);
+        $tags = "";
+        foreach ($entry->getEntryTag() as $entryTag){
+            $tags .= $entryTag->getTag()->getName().", ";
+        }
+        $form = $this->createForm(EntryType::class, $entry);
         $form->handleRequest($request);
+
         if($form->isSubmitted()){
             if($form->isValid()){
-                $category->setName($form->get("name")->getData());
-                $category->setDescription($form->get("description")->getData());
-                $em->persist($category);
+                $entry->setTitle($form->get("title")->getData());
+                $entry->setContent($form->get("content")->getData());
+                $entry->setStatus($form->get("status")->getData());
+
+                $file = $form["image"]->getData();
+                $ext = $file->guessExtension();
+                $file_name = time().".".$ext;
+                $file->move("uploads", $file_name);
+
+                $entry->setImage($file_name);
+                $category = $category_repo->find($form->get("category")->getData());
+
+                $entry->setCategory($category);
+                $user = $this->getUser();
+                $entry->setUser($user);
+
+                $em->persist($entry);
+
                 $flush = $em->flush();
+                $entry_tag_repository = $em->getRepository("BlogBundle:EntryTag");
+                $entryTag = $entry_tag_repository->findBy(array("entry" => $entry));
+                foreach ($entryTag as $et){
+                    if(is_object($et)){
+                        $em->remove($et);
+                        $em->flush();
+                    }
+                }
+                $entry_repo->saveEntryTags($form->get("tags")->getData(),
+                    $form->get("title")->getData(),
+                    $category,
+                    $user);
                 if($flush == null){
-                    $status = true;
+                    $status = "La entrada se ha editado correctamente";
                 }else{
-                    $status = false;
+                    $status = "La entrada no se ha editado";
                 }
             }else{
-                $status = false;
+                $status = "El formulario no es válido";
             }
             $this->session->getFlashBag()->add("status", $status);
-            return $this->redirectToRoute("blog_index_category");
+            return  $this->redirectToRoute("blog_homepage");
         }
-        return $this->render("BlogBundle:Category:edit.html.twig", array(
-            "form" => $form->createView()
-        ));
+        return $this->render("BlogBundle:Entry:edit.html.twig",
+            array("form" => $form->createView(),
+                "entry" => $entry,
+                "tags" => $tags));
     }
 }

@@ -213,4 +213,24 @@ class Entry
     public function getEntries(){
         return $this->entryTag;
     }
+
+    /**
+     * Remove entryTag
+     *
+     * @param \BlogBundle\Entity\EntryTag $entryTag
+     */
+    public function removeEntryTag(\BlogBundle\Entity\EntryTag $entryTag)
+    {
+        $this->entryTag->removeElement($entryTag);
+    }
+
+    /**
+     * Get entryTag
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getEntryTag()
+    {
+        return $this->entryTag;
+    }
 }
